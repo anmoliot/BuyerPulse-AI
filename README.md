@@ -20,8 +20,12 @@ BuyerPulse AI processes raw, unstructured customer inquiries into structured dec
 
 ## Live Demo
 
-- **Frontend (Vercel):** `https://buyerpulse-ai.vercel.app` *(Placeholder — update with your deployed Vercel URL)*
-- **Backend (Render):** `https://buyerpulse-ai-api.onrender.com` *(Placeholder — update with your deployed Render URL)*
+| Service | Endpoint / Link | Description |
+|---|---|---|
+| **Frontend** | [https://buyerpulse-ai.vercel.app](https://buyerpulse-ai.vercel.app) | Single-page application hosted on Vercel |
+| **Backend API** | [https://buyerpulse-ai-api.onrender.com](https://buyerpulse-ai-api.onrender.com) | FastAPI service hosted on Render |
+| **Health Check** | [https://buyerpulse-ai-api.onrender.com/api/health](https://buyerpulse-ai-api.onrender.com/api/health) | Live service status and AI configuration probe |
+| **API Docs** | [https://buyerpulse-ai-api.onrender.com/docs](https://buyerpulse-ai-api.onrender.com/docs) | Interactive OpenAPI / Swagger documentation |
 
 ### Demo Credentials
 None required. The application is a public prototype with zero login friction.
@@ -37,6 +41,16 @@ None required. The application is a public prototype with zero login friction.
 | Sales Copilot Grounded Chat | Follow-up Copilot & Decay Risk |
 |---|---|
 | ![Sales Copilot](docs/screenshots/sales-copilot.png)<br/>*`docs/screenshots/sales-copilot.png`* | ![Follow-up Copilot](docs/screenshots/followup-copilot.png)<br/>*`docs/screenshots/followup-copilot.png`* |
+
+---
+
+## Engineering Notes
+
+- **Prototype Client Storage (`localStorage`):** Lead data and conversation history are intentionally stored client-side in browser `localStorage` (`buyerpulse.leads.v1`). This guarantees instant zero-latency hydration without persistent database maintenance or multi-user collision risks during evaluation.
+- **No Authentication:** Omitted intentionally to match the evaluation scope and provide zero friction during assessment review.
+- **Lightweight AI Rate Limiting:** All AI mutation endpoints (`POST /api/leads/analyze`, `POST /api/copilot/chat`, `POST /api/copilot/followup`) enforce an in-memory sliding-window rate limit of 10 requests per minute per IP to protect backend workers and upstream quotas. Health and demo endpoints remain unthrottled.
+- **Decision Support vs. Prediction:** AI inferences, urgency classifications, objection severities, and recommended follow-up actions serve strictly as sales decision support aids and do not constitute deterministic business predictions.
+- **Negative Hallucination Guardrails:** Centralized system prompts explicitly prohibit inventing property inventory, project names, prices, possession dates, amenities, or legal/RERA approvals. Stated facts are validated and ungrounded claims are automatically stripped server-side.
 
 ---
 
