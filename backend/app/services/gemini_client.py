@@ -8,7 +8,7 @@ from google.genai import types
 from app.config import get_settings
 from app.utils.json_parser import AIJSONError, parse_json_strict
 
-logger = logging.getLogger("dealradar.gemini")
+logger = logging.getLogger("buyerpulse.gemini")
 _client: genai.Client | None = None
 
 

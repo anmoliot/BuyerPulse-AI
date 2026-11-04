@@ -8,16 +8,16 @@ from app.config import get_settings
 from app.routes import copilot, health, leads
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
-logger = logging.getLogger("dealradar")
+logger = logging.getLogger("buyerpulse")
 settings = get_settings()
 
-app = FastAPI(title="DealRadar AI", version="1.0.0")
+app = FastAPI(title="BuyerPulse AI", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.origins_list or ["http://localhost:5173"],
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization"],
+    allow_headers=["*"],
 )
 
 app.include_router(health.router, prefix="/api", tags=["health"])
@@ -33,4 +33,4 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 
 @app.get("/")
 def root() -> dict[str, str]:
-    return {"service": "DealRadar AI", "docs": "/docs", "health": "/api/health"}
+    return {"service": "BuyerPulse AI", "docs": "/docs", "health": "/api/health"}

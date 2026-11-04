@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: dealradar-ai-backend
+    name: buyerpulse-ai-backend
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
