@@ -1,13 +1,13 @@
 export const PRIORITY_COLORS = {
-  HOT: "bg-red-500/15 text-red-300 border border-red-500/30",
+  HOT: "bg-red-500/15 text-red-400 border border-red-500/30",
   WARM: "bg-amber-500/15 text-amber-300 border border-amber-500/30",
-  COLD: "bg-sky-500/15 text-sky-300 border border-sky-500/30",
+  COLD: "bg-slate-500/15 text-slate-300 border border-slate-500/30",
 };
 
 export const SEVERITY_COLORS = {
-  HIGH: "bg-red-500/15 text-red-300 border border-red-500/30",
+  HIGH: "bg-red-500/15 text-red-400 border border-red-500/30",
   MEDIUM: "bg-amber-500/15 text-amber-300 border border-amber-500/30",
-  LOW: "bg-sky-500/15 text-sky-300 border border-sky-500/30",
+  LOW: "bg-slate-500/15 text-slate-300 border border-slate-500/30",
 };
 
 export function priorityFromScore(score) {
