@@ -1,14 +1,15 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.schemas import CopilotChatRequest, CopilotChatResponse, FollowUpRequest, FollowUpResponse
 from app.services.followup_engine import generate_followup
 from app.services.gemini_client import AIConfigError, AIJSONError, AITimeoutError, AIUpstreamError
 from app.services.sales_copilot import chat as run_chat
+from app.utils.rate_limiter import ai_rate_limiter
 
 router = APIRouter(prefix="/copilot", tags=["copilot"])
 
 
-@router.post("/chat", response_model=CopilotChatResponse)
+@router.post("/chat", response_model=CopilotChatResponse, dependencies=[Depends(ai_rate_limiter)])
 async def chat(payload: CopilotChatRequest) -> CopilotChatResponse:
     try:
         return await run_chat(payload)
@@ -20,7 +21,7 @@ async def chat(payload: CopilotChatRequest) -> CopilotChatResponse:
         raise HTTPException(status_code=502, detail="Copilot could not answer. Please retry.") from None
 
 
-@router.post("/followup", response_model=FollowUpResponse)
+@router.post("/followup", response_model=FollowUpResponse, dependencies=[Depends(ai_rate_limiter)])
 async def followup(payload: FollowUpRequest) -> FollowUpResponse:
     try:
         return await generate_followup(payload)

@@ -30,11 +30,22 @@ None required. The application is a public prototype with zero login friction.
 
 ## Screenshots
 
-*(Placeholders — add production screenshots after deploying)*
-- **Dashboard & Priority Queue:** `docs/screenshots/dashboard.png`
-- **Lead Intelligence & Call-Ready Brief:** `docs/screenshots/lead-detail.png`
-- **Context-Aware Sales Copilot:** `docs/screenshots/copilot-chat.png`
-- **Follow-Up Intelligence & Decay Risk:** `docs/screenshots/followup.png`
+| Priority Queue & Dashboard | Lead Intelligence & Pre-Call Brief |
+|---|---|
+| ![Dashboard & Priority Queue](docs/screenshots/dashboard.png)<br/>*`docs/screenshots/dashboard.png`* | ![Lead Intelligence](docs/screenshots/lead-intelligence.png)<br/>*`docs/screenshots/lead-intelligence.png`* |
+
+| Sales Copilot Grounded Chat | Follow-up Copilot & Decay Risk |
+|---|---|
+| ![Sales Copilot](docs/screenshots/sales-copilot.png)<br/>*`docs/screenshots/sales-copilot.png`* | ![Follow-up Copilot](docs/screenshots/followup-copilot.png)<br/>*`docs/screenshots/followup-copilot.png`* |
+
+---
+
+## AI Provider Status
+
+- **Gemini Status:** In Google Cloud projects where billing is not enabled, Google returns:  
+  `403 PERMISSION_DENIED: The Gemini API free tier is not available for this project`.  
+  When an active Gemini project key with billing is provided via `GEMINI_API_KEY`, BuyerPulse AI immediately routes to **`gemini-3.8-flash`**.
+- **Active Fallback Provider:** **Groq** (OpenAI-compatible LPU engine with `qwen/qwen3.8-27b` and `openai/gpt-oss-20b`) is the active operational provider. It runs with zero cost, sub-second latency (<1.2s), and automated failover across model tiers, producing identical 16-field structured JSON validated against the server-side Pydantic schema and deterministic scoring/decay guardrails.
 
 ---
 
@@ -103,7 +114,7 @@ All backend endpoints are prefixed with `/api`. Interactive OpenAPI docs are ava
 
 ---
 
-## AI Workflow & Prompt Design
+## AI Workflow, Structured Output & Validation Approach
 
 1. **Intake Processing:** The frontend transmits the validated intake to `POST /api/leads/analyze`.
 2. **Prompt Construction:** Centralized prompt builders in `backend/app/services/prompts.py` enforce strict boundaries:
@@ -156,6 +167,7 @@ Lead decay risk represents how quickly an opportunity goes cold if uncontacted:
 - **Robust Parsing:** Strips Markdown blocks and isolates the first balanced `{...}` JSON structure.
 - **Corrective Retry:** Automatically prompts Gemini once with error details if JSON parsing fails.
 - **Bounded Timeouts:** Async requests are capped (30s for analysis, 20s for chat/follow-up) to prevent hung worker threads.
+- **AI Rate Limiting:** Enforces an in-memory 10 requests/minute sliding window per client IP on AI routes (`/api/leads/analyze`, `/api/copilot/chat`, `/api/copilot/followup`) returning HTTP 429 to protect upstream quotas, while leaving health and demo endpoints unthrottled.
 - **Controlled Error Codes:** Mapped to standard HTTP responses (500 for missing config, 502 for upstream/parsing failure, 504 for timeout, 422 for bad input).
 - **Audit Logging:** Logs omit customer message bodies and API keys; exception tracebacks are preserved for operational diagnosis.
 

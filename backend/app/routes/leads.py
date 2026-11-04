@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from app.utils.rate_limiter import ai_rate_limiter
 
 from app.schemas import LeadAnalysis, LeadIntake
 from app.services.gemini_client import AIConfigError, AIJSONError, AITimeoutError, AIUpstreamError
@@ -346,7 +347,7 @@ def demo_leads() -> list[dict]:
     return DEMO_LEADS_DATA
 
 
-@router.post("/analyze", response_model=LeadAnalysis)
+@router.post("/analyze", response_model=LeadAnalysis, dependencies=[Depends(ai_rate_limiter)])
 async def analyze(intake: LeadIntake) -> LeadAnalysis:
     try:
         return await analyze_lead(intake)
