@@ -8,6 +8,8 @@ class Settings(BaseSettings):
 
     gemini_api_key: str = ""
     gemini_model: str = "gemini-3.8-flash"
+    groq_api_key: str = ""
+    groq_model: str = "qwen/qwen3.8-27b"
     allowed_origins: str = "http://localhost:5173"
 
     @property
@@ -16,7 +18,7 @@ class Settings(BaseSettings):
 
     @property
     def ai_configured(self) -> bool:
-        return bool(self.gemini_api_key.strip())
+        return bool(self.groq_api_key.strip() or self.gemini_api_key.strip())
 
 
 @lru_cache

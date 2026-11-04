@@ -29,7 +29,7 @@ export default function LeadDetailPanel({ lead, onRetry }) {
       {!a && lead.analysis_error && (
         <div className="card p-4 border-red-500/30 bg-red-500/5">
           <div className="text-sm text-red-300">Analysis failed: {lead.analysis_error}</div>
-          <button className="btn-primary mt-2" onClick={() => onRetry(lead.id)}>Retry analysis</button>
+          <button className="btn-primary mt-2" onClick={() => onRetry(lead)}>Retry analysis</button>
         </div>
       )}
 

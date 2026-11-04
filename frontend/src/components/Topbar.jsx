@@ -7,12 +7,14 @@ export default function Topbar({ aiConfigured }) {
       <div className="flex items-center gap-3">
         <span
           className={`chip ${
-            aiConfigured === false
-              ? "bg-red-500/15 text-red-300 border border-red-500/30"
-              : "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
+            aiConfigured === null
+              ? "bg-slate-500/15 text-slate-300 border border-slate-500/30"
+              : aiConfigured === true
+              ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
+              : "bg-red-500/15 text-red-300 border border-red-500/30"
           }`}
         >
-          {aiConfigured === false ? "AI not configured" : "AI online"}
+          {aiConfigured === null ? "Checking AI…" : aiConfigured === true ? "AI online" : "AI offline"}
         </span>
       </div>
     </header>

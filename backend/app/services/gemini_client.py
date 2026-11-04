@@ -2,6 +2,7 @@ import asyncio
 import logging
 from typing import Any
 
+import httpx
 from google import genai
 from google.genai import types
 
@@ -29,14 +30,59 @@ def _client_or_raise() -> genai.Client:
     if _client is None:
         settings = get_settings()
         if not settings.ai_configured:
-            raise AIConfigError("GEMINI_API_KEY is not configured")
+            raise AIConfigError("AI API key is not configured")
         _client = genai.Client(api_key=settings.gemini_api_key)
     return _client
 
 
-async def _one_call(system: str, user: str, timeout: float) -> str:
-    client = _client_or_raise()
+async def _call_groq(system: str, user: str, timeout: float) -> str:
     settings = get_settings()
+    headers = {
+        "Authorization": f"Bearer {settings.groq_api_key.strip()}",
+        "Content-Type": "application/json",
+        "User-Agent": "BuyerPulseAI/1.0",
+    }
+    candidate_models = [settings.groq_model, "openai/gpt-oss-20b", "openai/gpt-oss-120b"]
+    try:
+        async with httpx.AsyncClient(timeout=timeout) as http_client:
+            for model_name in candidate_models:
+                payload = {
+                    "model": model_name,
+                    "messages": [
+                        {"role": "system", "content": system},
+                        {"role": "user", "content": user},
+                    ],
+                    "response_format": {"type": "json_object"},
+                    "temperature": 0.3,
+                }
+                resp = await http_client.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    json=payload,
+                    headers=headers,
+                )
+                if resp.status_code == 429:
+                    logger.warning("groq_model_rate_limited_failover", extra={"model": model_name})
+                    continue
+                if resp.status_code != 200:
+                    logger.warning("groq_upstream_error", extra={"status": resp.status_code, "body": resp.text[:200]})
+                    raise AIUpstreamError(f"Groq API error ({resp.status_code})")
+                data = resp.json()
+                return data["choices"][0]["message"]["content"]
+            raise AIUpstreamError("All AI models currently busy. Please retry in a few seconds.")
+    except httpx.TimeoutException as error:
+        raise AITimeoutError(f"AI request exceeded {timeout}s") from error
+    except (AIConfigError, AITimeoutError, AIUpstreamError):
+        raise
+    except Exception as error:  # noqa: BLE001
+        logger.warning("ai_upstream_error", extra={"err_type": type(error).__name__})
+        raise AIUpstreamError("AI request failed") from error
+
+
+async def _one_call(system: str, user: str, timeout: float) -> str:
+    settings = get_settings()
+    if settings.groq_api_key.strip():
+        return await _call_groq(system, user, timeout)
+    client = _client_or_raise()
     try:
         response = await asyncio.wait_for(
             client.aio.models.generate_content(

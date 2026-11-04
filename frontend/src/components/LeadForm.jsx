@@ -28,6 +28,21 @@ export default function LeadForm({ onSubmit, onLoadDemo }) {
     return e;
   }
 
+  function handleBlur(key, label) {
+    const v = values[key]?.trim();
+    let err = undefined;
+    if (key === "customer_message") {
+      if (!v) err = "Customer message is required";
+      else if (v.length < 10) err = "Please add more detail (≥10 chars)";
+    } else {
+      if (!v) err = `${label} is required`;
+    }
+    setErrors((prev) => ({
+      ...prev,
+      [key]: err,
+    }));
+  }
+
   async function submit(e) {
     e.preventDefault();
     const errs = validate();
@@ -59,7 +74,7 @@ export default function LeadForm({ onSubmit, onLoadDemo }) {
               className="input"
               value={values[f.key]}
               onChange={set(f.key)}
-              onBlur={() => setErrors((er) => ({ ...er, ...validate() }))}
+              onBlur={() => handleBlur(f.key, f.label)}
               placeholder={f.placeholder}
             />
             {errors[f.key] && <p className="text-xs text-red-400 mt-1">{errors[f.key]}</p>}
@@ -75,7 +90,7 @@ export default function LeadForm({ onSubmit, onLoadDemo }) {
           className="input"
           value={values.customer_message}
           onChange={set("customer_message")}
-          onBlur={() => setErrors((er) => ({ ...er, ...validate() }))}
+          onBlur={() => handleBlur("customer_message", "Customer message")}
           placeholder="Paste the customer's inquiry here..."
         />
         {errors.customer_message && <p className="text-xs text-red-400 mt-1">{errors.customer_message}</p>}

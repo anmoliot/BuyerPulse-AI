@@ -27,10 +27,16 @@ app.include_router(copilot.router, prefix="/api")
 
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request: Request, exc: Exception):
-    logger.error("unhandled_exception", extra={"path": request.url.path, "err_type": type(exc).__name__})
+    logger.error("Unhandled exception: %s", exc, exc_info=True)
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 
 @app.get("/")
 def root() -> dict[str, str]:
     return {"service": "BuyerPulse AI", "docs": "/docs", "health": "/api/health"}
+
+
+@app.get("/health")
+def health_direct():
+    from app.routes.health import health
+    return health()
