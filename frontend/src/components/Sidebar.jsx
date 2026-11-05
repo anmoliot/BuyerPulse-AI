@@ -1,49 +1,89 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Users, UserPlus, Sparkles, Building2, ShieldCheck, X } from "lucide-react";
+import { LayoutDashboard, Users, UserPlus, X, Sparkles } from "lucide-react";
 
 const navigationItems = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/leads", label: "Leads", icon: Users },
-  { to: "/leads/new", label: "Add Lead", icon: UserPlus },
+  { to: "/", label: "Dashboard", icon: LayoutDashboard, note: "Overview" },
+  { to: "/leads", label: "Leads Queue", icon: Users, note: "Prioritized" },
+  { to: "/leads/new", label: "Add Lead", icon: UserPlus, note: "New inquiry" },
 ];
+
+// Minimal botanical leaf mark
+const BotanicalLeafMark = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
+    <path
+      d="M12 21C12 21 5 16 5 9.5C5 5.5 8.5 2.5 12 2.5C15.5 2.5 19 5.5 19 9.5C19 16 12 21 12 21Z"
+      stroke="#1e382c"
+      strokeWidth="1.25"
+      fill="#e0e5d3"
+    />
+    <path
+      d="M12 4.5V19"
+      stroke="#1e382c"
+      strokeWidth="1.25"
+      strokeLinecap="round"
+    />
+    <path
+      d="M12 9L15.5 7"
+      stroke="#1e382c"
+      strokeWidth="1"
+      strokeLinecap="round"
+    />
+    <path
+      d="M12 12L8.5 10"
+      stroke="#1e382c"
+      strokeWidth="1"
+      strokeLinecap="round"
+    />
+    <path
+      d="M12 15L15 13.5"
+      stroke="#1e382c"
+      strokeWidth="1"
+      strokeLinecap="round"
+    />
+  </svg>
+);
 
 export default function Sidebar({ mobileOpen, setMobileOpen }) {
   const content = (
-    <div className="flex flex-col h-full bg-surface-900 border-r border-white/[0.06] p-4 text-slate-200">
+    <div className="flex flex-col h-full bg-[#fbf8f0] border-r border-[#d4d0bd] p-6 text-[#1e382c]">
       {/* Brand Header */}
-      <div className="flex items-center justify-between pb-5 mb-5 border-b border-white/[0.06]">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-glow">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5 font-bold tracking-tight text-slate-100 text-base">
-              <span>BuyerPulse</span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-1.5 py-0.2 rounded-md">
-                AI
-              </span>
+      <div className="pb-6 mb-6 border-b border-[#d4d0bd]">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <BotanicalLeafMark />
+            <div>
+              <div className="font-serif text-2xl font-normal tracking-tight text-[#1e382c] leading-none">
+                BuyerPulse
+              </div>
+              <div className="font-sans text-[11px] font-semibold tracking-[0.14em] uppercase text-[#895440] mt-1">
+                AI Copilot
+              </div>
             </div>
-            <div className="text-[11px] text-slate-400 font-medium">Real Estate Intelligence</div>
           </div>
+
+          {setMobileOpen && (
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="md:hidden p-1.5 rounded-full hover:bg-[#e0e5d3] text-[#3d5446] transition"
+              aria-label="Close menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
-        {/* Mobile close button */}
-        {setMobileOpen && (
-          <button
-            onClick={() => setMobileOpen(false)}
-            className="md:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06]"
-            aria-label="Close menu"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        )}
+        <p className="font-sans text-xs text-[#697961] mt-3 leading-relaxed">
+          Lead qualification &amp; follow-up intelligence for real estate teams.
+        </p>
       </div>
 
-      {/* Main Navigation */}
-      <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 px-3 mb-2">
-        Platform
+      {/* Navigation Label */}
+      <div className="font-sans text-[11px] font-semibold uppercase tracking-[0.12em] text-[#697961] mb-3 px-3">
+        Workspace
       </div>
-      <nav className="flex flex-col gap-1.5">
+
+      {/* Navigation */}
+      <nav className="flex flex-col gap-1.5 flex-1">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -53,25 +93,30 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
               end={item.to === "/"}
               onClick={() => setMobileOpen && setMobileOpen(false)}
               className={({ isActive }) =>
-                `group relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs md:text-sm font-medium transition-all duration-150 ${
+                `group flex items-center justify-between px-3.5 py-2.5 rounded-xl font-sans text-sm font-medium transition-all ${
                   isActive
-                    ? "bg-indigo-600/15 text-indigo-300 shadow-sm border border-indigo-500/20"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+                    ? "bg-[#e0e5d3] text-[#1e382c] border-l-2 border-[#1e382c] shadow-sm font-semibold"
+                    : "text-[#3d5446] hover:bg-[#e0e5d3]/50 hover:text-[#1e382c]"
                 }`
               }
             >
               {({ isActive }) => (
                 <>
-                  {/* Left accent bar on active route */}
-                  {isActive && (
-                    <span className="absolute left-0 top-2 bottom-2 w-1 bg-indigo-500 rounded-r-full" />
-                  )}
-                  <Icon
-                    className={`w-4 h-4 transition-colors ${
-                      isActive ? "text-indigo-400" : "text-slate-400 group-hover:text-slate-200"
+                  <div className="flex items-center gap-3">
+                    <Icon
+                      className={`w-4 h-4 transition-colors ${
+                        isActive ? "text-[#1e382c]" : "text-[#697961] group-hover:text-[#1e382c]"
+                      }`}
+                    />
+                    <span>{item.label}</span>
+                  </div>
+                  <span
+                    className={`text-[11px] tracking-wide font-sans ${
+                      isActive ? "text-[#697961]" : "text-[#b5baa4] group-hover:text-[#697961]"
                     }`}
-                  />
-                  <span>{item.label}</span>
+                  >
+                    {item.note}
+                  </span>
                 </>
               )}
             </NavLink>
@@ -79,24 +124,20 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
         })}
       </nav>
 
-      {/* Workspace Footer / Prototype State */}
-      <div className="mt-auto pt-4 border-t border-white/[0.06] space-y-3">
-        <div className="bg-surface-850/90 border border-white/[0.06] rounded-xl p-3 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-surface-800 border border-white/[0.08] flex items-center justify-center text-slate-300">
-            <Building2 className="w-4 h-4 text-indigo-400" />
+      {/* Workspace status footer */}
+      <div className="pt-4 border-t border-[#d4d0bd] space-y-3">
+        <div className="bg-[#e0e5d3]/50 rounded-2xl p-3 border border-[#d4d0bd]">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-[#1e382c]" />
+            <span className="font-sans text-xs font-semibold text-[#1e382c]">Acme Realty</span>
           </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-xs font-semibold text-slate-200 truncate">Acme Realty Group</div>
-            <div className="flex items-center gap-1 text-[11px] text-slate-500">
-              <ShieldCheck className="w-3 h-3 text-indigo-400 inline" />
-              <span>Prototype Sandbox</span>
-            </div>
+          <div className="font-sans text-[11px] text-[#697961]">
+            Prototype workspace · local state
           </div>
         </div>
 
-        <div className="px-1 text-[11px] text-slate-500 flex items-center justify-between">
-          <span>Client-only store</span>
-          <span className="font-mono text-[10px] text-slate-400">v1.0.0</span>
+        <div className="font-sans text-[11px] text-[#8c9b88] text-center">
+          BuyerPulse AI · Gemini 3.8 Flash
         </div>
       </div>
     </div>
@@ -113,10 +154,10 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden flex">
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-[#1e382c]/40 backdrop-blur-sm transition-opacity"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="relative w-72 max-w-[80vw] h-full shadow-2xl z-10 animate-in slide-in-from-left duration-200">
+          <div className="relative w-72 max-w-[85vw] h-full shadow-xl z-10">
             {content}
           </div>
         </div>

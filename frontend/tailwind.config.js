@@ -5,48 +5,78 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
+        display: ['"EB Garamond"', "Georgia", "serif"],
+        serif: ['"EB Garamond"', "Georgia", "serif"],
+        reading: ['"Instrument Sans"', "sans-serif"],
+        sans: ['"Instrument Sans"', "system-ui", "sans-serif"],
       },
       colors: {
-        surface: {
-          950: "#080c14", // Deepest background
-          900: "#0d1320", // Sidebar & sticky headers
-          850: "#121a2c", // Elevated cards
-          800: "#18233c", // Nested cards, inputs
-          750: "#1f2c4c", // Card hover, active rows
-          700: "#27375f", // Borders
+        botanical: {
+          ground: "#f5efdf",
+          ink: "#1e382c",
+          panel: "#e0e5d3",       // Sage
+          clay: "#e6cbb8",        // Warm-field
+          accent: "#895440",      // Terracotta
+          rule: "#d4d0bd",        // Hairline rule
+          ornament: "#b5baa4",    // Ornament line
+          field: "#697961",       // Field line
         },
+        // Semantic aliases
+        ground: "#f5efdf",
         ink: {
-          900: "#080c14",
-          850: "#0d1320",
-          800: "#121a2c",
-          750: "#18233c",
-          700: "#233050",
-          600: "#2e3f68",
+          DEFAULT: "#1e382c",
+          muted: "#3d5446",
+          faint: "#697961",
         },
-        brand: {
-          50: "#eef2ff",
-          100: "#e0e7ff",
-          200: "#c7d2fe",
-          300: "#a5b4fc",
-          400: "#818cf8",
-          500: "#6366f1",
-          600: "#4f46e5",
-          700: "#4338ca",
-          800: "#3730a3",
-          900: "#312e81",
+        sage: {
+          DEFAULT: "#e0e5d3",
+          light: "#ecf0e4",
+          dark: "#cbd3bc",
         },
+        clay: {
+          DEFAULT: "#e6cbb8",
+          light: "#f0ded0",
+          dark: "#d8b69f",
+        },
+        terracotta: {
+          DEFAULT: "#895440",
+          light: "#a36852",
+          dark: "#6f4230",
+        },
+        rule: "#d4d0bd",
+        // Backward-compatibility
         accent: {
-          DEFAULT: "#6366f1",
-          soft: "#818cf8",
-          glow: "rgba(99, 102, 241, 0.15)",
+          DEFAULT: "#895440",
+          light: "#a36852",
+          soft: "#d8b69f",
+        },
+        surface: {
+          950: "#f5efdf",
+          900: "#fbf8f0",
+          850: "#ffffff",
+          800: "#e0e5d3",
+          750: "#e6cbb8",
+          700: "#d4d0bd",
+        },
+        paper: {
+          DEFAULT: "#f5efdf",
+          light: "#fbf8f0",
+          dark: "#e0e5d3",
         },
       },
+      borderRadius: {
+        panel: "34px",
+        "panel-narrow": "27px",
+        "panel-sm": "20px",
+      },
       boxShadow: {
-        subtle: "0 1px 2px 0 rgba(0, 0, 0, 0.35)",
-        elevated: "0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.3)",
-        glow: "0 0 25px -5px rgba(99, 102, 241, 0.25)",
-        "glow-hot": "0 0 25px -5px rgba(239, 68, 68, 0.25)",
+        subtle: "0 1px 3px rgba(30, 56, 44, 0.04), 0 4px 12px rgba(30, 56, 44, 0.02)",
+        panel: "0 2px 8px rgba(30, 56, 44, 0.04)",
+        card: "0 1px 2px rgba(30, 56, 44, 0.03)",
+        focus: "0 0 0 3px rgba(30, 56, 44, 0.15)",
+      },
+      transitionDuration: {
+        interaction: "350ms",
       },
     },
   },

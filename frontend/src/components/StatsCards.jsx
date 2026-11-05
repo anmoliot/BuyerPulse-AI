@@ -1,17 +1,84 @@
-import { Users, Flame, TrendingUp, Clock, Zap, CalendarClock } from "lucide-react";
+import { Users, Flame, TrendingUp, Compass, Zap, CalendarClock } from "lucide-react";
+
+function BotanicalKpiCard({ label, value, caption, icon: Icon, tone = "default" }) {
+  // Tone styling
+  const toneMap = {
+    default: {
+      bg: "bg-[#fbf8f0]",
+      iconBg: "bg-[#e0e5d3]",
+      iconColor: "text-[#1e382c]",
+      numColor: "text-[#1e382c]",
+    },
+    hot: {
+      bg: "bg-[#fbf8f0]",
+      iconBg: "bg-[#895440]/15",
+      iconColor: "text-[#895440]",
+      numColor: "text-[#895440]",
+    },
+    warm: {
+      bg: "bg-[#fbf8f0]",
+      iconBg: "bg-[#e6cbb8]/60",
+      iconColor: "text-[#6d4231]",
+      numColor: "text-[#1e382c]",
+    },
+    cold: {
+      bg: "bg-[#fbf8f0]",
+      iconBg: "bg-[#e0e5d3]/70",
+      iconColor: "text-[#697961]",
+      numColor: "text-[#1e382c]",
+    },
+    urgent: {
+      bg: "bg-[#fbf8f0]",
+      iconBg: "bg-[#895440]/15",
+      iconColor: "text-[#895440]",
+      numColor: "text-[#895440]",
+    },
+    due: {
+      bg: "bg-[#fbf8f0]",
+      iconBg: "bg-[#e6cbb8]/60",
+      iconColor: "text-[#6d4231]",
+      numColor: "text-[#1e382c]",
+    },
+  };
+
+  const style = toneMap[tone] || toneMap.default;
+
+  return (
+    <div
+      className={`${style.bg} border border-[#d4d0bd] rounded-[34px] p-5 md:p-6 flex flex-col justify-between transition-all duration-interaction hover:-translate-y-0.5 hover:shadow-subtle`}
+    >
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.12em] text-[#697961]">
+          {label}
+        </span>
+        <div className={`w-8 h-8 rounded-full ${style.iconBg} flex items-center justify-center shrink-0`}>
+          <Icon className={`w-4 h-4 ${style.iconColor}`} />
+        </div>
+      </div>
+
+      <div className={`font-serif text-3xl md:text-4xl font-normal ${style.numColor} leading-none mb-2`}>
+        {value}
+      </div>
+
+      <div className="font-sans text-xs text-[#4a6353]">
+        {caption}
+      </div>
+    </div>
+  );
+}
 
 export default function StatsCards({ leads = [], loading = false }) {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="kpi-card p-4 space-y-3">
+          <div key={i} className="botanical-card rounded-[34px] p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <div className="w-16 h-3 skeleton" />
-              <div className="w-7 h-7 rounded-lg skeleton" />
+              <div className="botanical-skeleton w-14 h-3" />
+              <div className="botanical-skeleton w-8 h-8 rounded-full" />
             </div>
-            <div className="w-12 h-7 skeleton" />
-            <div className="w-24 h-2.5 skeleton" />
+            <div className="botanical-skeleton w-12 h-8" />
+            <div className="botanical-skeleton w-20 h-3" />
           </div>
         ))}
       </div>
@@ -26,95 +93,62 @@ export default function StatsCards({ leads = [], loading = false }) {
     (l) => l.analysis?.priority === "HOT" && l.analysis?.urgency === "HIGH"
   ).length;
   const dueNow = leads.filter(
-    (l) => l.follow_up_status === "PENDING" && l.follow_up_due_at && new Date(l.follow_up_due_at) <= new Date()
+    (l) =>
+      l.follow_up_status === "PENDING" &&
+      l.follow_up_due_at &&
+      new Date(l.follow_up_due_at) <= new Date()
   ).length;
 
-  const kpis = [
+  const stats = [
     {
       label: "Total Leads",
       value: total,
-      caption: "Active pipeline",
+      caption: "In local registry",
       icon: Users,
-      iconColor: "text-slate-300",
-      iconBg: "bg-slate-500/15 border-slate-500/20",
-      accentValue: "text-slate-100",
+      tone: "default",
     },
     {
       label: "Hot Leads",
       value: hot,
-      caption: "Score 75–100",
+      caption: total > 0 ? `${Math.round((hot / total) * 100)}% of pipeline` : "Ready to close",
       icon: Flame,
-      iconColor: "text-red-400",
-      iconBg: "bg-red-500/15 border-red-500/25",
-      accentValue: "text-red-400",
+      tone: "hot",
     },
     {
       label: "Warm Leads",
       value: warm,
-      caption: "Score 40–74",
+      caption: "Nurture & qualify",
       icon: TrendingUp,
-      iconColor: "text-amber-400",
-      iconBg: "bg-amber-500/15 border-amber-500/25",
-      accentValue: "text-amber-400",
+      tone: "warm",
     },
     {
       label: "Cold Leads",
       value: cold,
-      caption: "Score 0–39",
-      icon: Clock,
-      iconColor: "text-slate-400",
-      iconBg: "bg-slate-500/15 border-slate-500/25",
-      accentValue: "text-slate-300",
+      caption: "Long-term horizon",
+      icon: Compass,
+      tone: "cold",
     },
     {
       label: "High Priority",
       value: highPriority,
-      caption: "Hot + High urgency",
+      caption: "Immediate action",
       icon: Zap,
-      iconColor: "text-indigo-400",
-      iconBg: "bg-indigo-500/15 border-indigo-500/25",
-      accentValue: "text-indigo-300",
+      tone: "urgent",
     },
     {
       label: "Follow-ups Due",
       value: dueNow,
-      caption: "Action pending",
+      caption: dueNow > 0 ? "Requires outreach" : "All schedules fresh",
       icon: CalendarClock,
-      iconColor: dueNow > 0 ? "text-rose-400" : "text-emerald-400",
-      iconBg: dueNow > 0 ? "bg-rose-500/15 border-rose-500/25" : "bg-emerald-500/15 border-emerald-500/25",
-      accentValue: dueNow > 0 ? "text-rose-400" : "text-emerald-400",
+      tone: "due",
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3.5">
-      {kpis.map((kpi) => {
-        const Icon = kpi.icon;
-        return (
-          <div key={kpi.label} className="kpi-card flex flex-col justify-between group">
-            <div className="flex items-center justify-between gap-2 mb-2">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 truncate">
-                {kpi.label}
-              </span>
-              <div
-                className={`w-7 h-7 rounded-lg border flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${kpi.iconBg}`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${kpi.iconColor}`} />
-              </div>
-            </div>
-
-            <div className="my-1">
-              <div className={`text-2xl md:text-3xl font-bold tracking-tight ${kpi.accentValue}`}>
-                {kpi.value}
-              </div>
-            </div>
-
-            <div className="text-[11px] text-slate-400 font-medium truncate">
-              {kpi.caption}
-            </div>
-          </div>
-        );
-      })}
+    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+      {stats.map((s, idx) => (
+        <BotanicalKpiCard key={idx} {...s} />
+      ))}
     </div>
   );
 }

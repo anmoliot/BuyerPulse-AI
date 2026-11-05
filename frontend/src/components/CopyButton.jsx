@@ -12,8 +12,20 @@ export default function CopyButton({ text, label = "Copy" }) {
     }
   };
   return (
-    <button onClick={onClick} className="btn-ghost !px-2 !py-1 text-xs" aria-label={label}>
-      {copied ? "Copied" : label}
+    <button
+      onClick={onClick}
+      className="btn-ghost"
+      aria-label={label}
+      style={{
+        fontSize: "0.78rem",
+        padding: "2px 10px",
+        color: copied ? "#2d6a2d" : "var(--dp-color-annotation)",
+        borderColor: copied ? "#4a9a4a" : "rgba(52,76,105,0.4)",
+        background: copied ? "rgba(45,106,45,0.07)" : "transparent",
+        transition: "all 150ms",
+      }}
+    >
+      {copied ? "✓ Copied!" : `📋 ${label}`}
     </button>
   );
 }

@@ -1,33 +1,93 @@
-import { PRIORITY_COLORS } from "../utils/priority";
-
 export default function ScoreBadge({ score = 0, priority, urgency, confidence, size = "md" }) {
+  const dim = size === "sm" ? 52 : 68;
   const r = size === "sm" ? 20 : 26;
   const c = 2 * Math.PI * r;
   const pct = Math.max(0, Math.min(100, score));
-  const stroke = `stroke-dasharray:${c};stroke-dashoffset:${c - (pct / 100) * c}`;
+  const offset = c - (pct / 100) * c;
+
+  const priorityColor = { HOT: "#9e3a2e", WARM: "#c8a830", COLD: "#8a8278" };
+  const priorityBg = { HOT: "rgba(158,58,46,0.1)", WARM: "rgba(240,223,160,0.4)", COLD: "rgba(179,172,157,0.15)" };
+  const col = priorityColor[priority] || "#b3ac9d";
+  const bg = priorityBg[priority] || "rgba(179,172,157,0.1)";
 
   return (
-    <div className="flex items-center gap-3">
-      <div className="relative" style={{ width: r * 2 + 8, height: r * 2 + 8 }}>
-        <svg width={r * 2 + 8} height={r * 2 + 8} className="rotate-[-90deg]">
-          <circle cx={r + 4} cy={r + 4} r={r} strokeWidth="4" className="stroke-ink-700" fill="none" />
+    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      {/* Sketch score circle */}
+      <div style={{ position: "relative", width: dim, height: dim }}>
+        <svg
+          width={dim}
+          height={dim}
+          viewBox={`0 0 ${dim} ${dim}`}
+          style={{ transform: "rotate(-90deg)" }}
+        >
+          {/* Rough outer ring */}
           <circle
-            cx={r + 4}
-            cy={r + 4}
+            cx={dim / 2}
+            cy={dim / 2}
+            r={r}
+            strokeWidth="3"
+            stroke="var(--dp-color-line)"
+            fill="none"
+            strokeDasharray="4 2"
+          />
+          {/* Score arc */}
+          <circle
+            cx={dim / 2}
+            cy={dim / 2}
             r={r}
             strokeWidth="4"
             fill="none"
-            className="stroke-accent"
-            style={{ strokeDasharray: c, strokeDashoffset: c - (pct / 100) * c, transition: "stroke-dashoffset 400ms" }}
+            stroke={col}
+            strokeLinecap="round"
+            style={{
+              strokeDasharray: c,
+              strokeDashoffset: offset,
+              transition: "stroke-dashoffset 500ms ease",
+            }}
           />
         </svg>
-        <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "'Caveat', cursive",
+            fontSize: size === "sm" ? "1rem" : "1.25rem",
+            fontWeight: 800,
+            color: col,
+          }}
+        >
           {pct}
         </div>
       </div>
-      <div className="flex flex-col">
-        <span className={`chip ${PRIORITY_COLORS[priority] || ""}`}>{priority || "—"}</span>
-        <span className="text-xs text-slate-400 mt-1">
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        {/* Priority badge */}
+        <span
+          style={{
+            fontFamily: "'Caveat', cursive",
+            fontSize: "0.9rem",
+            fontWeight: 700,
+            color: col,
+            background: bg,
+            border: `1.5px solid ${col}`,
+            borderRadius: "20px 6px 20px 6px / 6px 20px 6px 20px",
+            padding: "1px 10px",
+            display: "inline-block",
+          }}
+        >
+          {priority || "—"}
+        </span>
+        {/* Meta */}
+        <span
+          style={{
+            fontFamily: "'Kalam', cursive",
+            fontSize: "0.78rem",
+            color: "var(--dp-color-ink-muted)",
+          }}
+        >
           {urgency} urgency · {confidence} conf.
         </span>
       </div>
