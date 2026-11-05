@@ -1,6 +1,15 @@
 import axios from "axios";
 
-const rawBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+// If VITE_API_BASE_URL is explicitly configured, use it.
+// In development (localhost), default to http://localhost:8000.
+// In production on Vercel, default to "" (same-origin relative /api/*).
+const rawBase =
+  typeof import.meta.env.VITE_API_BASE_URL === "string" && import.meta.env.VITE_API_BASE_URL.trim() !== ""
+    ? import.meta.env.VITE_API_BASE_URL
+    : import.meta.env.DEV
+    ? "http://localhost:8000"
+    : "";
+
 const BASE = rawBase.replace(/\/+$/, "");
 const client = axios.create({ baseURL: BASE, timeout: 65000 });
 
@@ -11,9 +20,9 @@ function unwrap(p) {
       let detail = err?.response?.data?.detail;
       if (!detail) {
         if (err.message === "Network Error") {
-          detail = "Network error: Unable to reach AI service. The server may be waking up from sleep or blocked by CORS. Please retry in a few seconds.";
+          detail = "Network error: Unable to reach AI service. Please verify server connection.";
         } else if (err.code === "ECONNABORTED" || err.message?.includes("timeout")) {
-          detail = "AI service request timed out. If the backend is on a free tier, it may be waking up; please retry.";
+          detail = "AI service request timed out. Please retry.";
         } else {
           detail = err.message || "Request failed";
         }
