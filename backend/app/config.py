@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     gemini_model: str = "gemini-3.8-flash"
     groq_api_key: str = ""
     groq_model: str = "qwen/qwen3.8-27b"
-    allowed_origins: str = "http://localhost:5173"
+    allowed_origins: str = "*"
 
     @property
     def origins_list(self) -> list[str]:
