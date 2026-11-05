@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const rawBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const BASE = rawBase.replace(/\/+$/, "");
 const client = axios.create({ baseURL: BASE, timeout: 65000 });
 
 function unwrap(p) {

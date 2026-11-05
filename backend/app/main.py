@@ -12,14 +12,10 @@ logger = logging.getLogger("buyerpulse")
 settings = get_settings()
 
 app = FastAPI(title="BuyerPulse AI", version="1.0.0")
-cors_origins = settings.origins_list or ["*"]
-if "*" in cors_origins:
-    cors_origins = ["*"]
-
+# Permissive CORS for public assessment API (no session cookies or credentials used)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_origins,
-    allow_origin_regex=r"^(https://.*\.vercel\.app|http://localhost(:\d+)?)$",
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
